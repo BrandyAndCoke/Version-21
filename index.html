@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multi-Window Viewer</title>
+    <style>
+        .window {
+            width: 45%;
+            height: 45vh;
+            border: 1px solid #ccc;
+            margin: 10px;
+            float: left;
+            overflow: hidden;
+            position: relative;
+            text-align: center; /* Center loading spinner */
+        }
+        .window iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+        .loading {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="window" id="window1">
+        <div class="loading">Loading...</div>
+    </div>
+    <div class="window" id="window2">
+        <div class="loading">Loading...</div>
+    </div>
+    <div class="window" id="window3">
+        <div class="loading">Loading...</div>
+    </div>
+    <div class="window" id="window4">
+        <div class="loading">Loading...</div>
+    </div>
+    <div class="window" id="window5">
+        <div class="loading">Loading...</div>
+    </div>
+
+    <script>
+        const urls = [
+            "https://intl.fusionsolar.huawei.com/pvmswebsite/nologin/assets/build/cloud.html#/kiosk?kk=Dsis12ifMjHeA9LHzQroL3qv5xlNzmji",
+            "https://intl.fusionsolar.huawei.com/pvmswebsite/nologin/assets/build/cloud.html#/kiosk?kk=Hs4ayed382B7lfMs7Aawn6s8m7B9Iw3t",
+            "https://intl.fusionsolar.huawei.com/pvmswebsite/nologin/assets/build/cloud.html#/kiosk?kk=JEQ4wb6rNxofzb7uBQOhfj5gCsuoaL6M",
+            "https://intl.fusionsolar.huawei.com/pvmswebsite/nologin/assets/build/cloud.html#/kiosk?kk=JgamKw8LimCPpyhfsEe7eFzKavEnQxo7",
+            "https://intl.fusionsolar.huawei.com/pvmswebsite/nologin/assets/build/cloud.html#/kiosk?kk=r4Evb1INiy8KKQIrIDDgd6lJb5uMhM39"
+        ];
+
+        // Function to extract origin from URL
+        function extractOrigin(url) {
+            const urlObj = new URL(url);
+            return urlObj.origin;
+        }
+
+        // Function to load content into a window
+        function loadContent(url, windowId) {
+            const windowElement = document.getElementById(windowId);
+            const loadingIndicator = windowElement.querySelector('.loading');
+            
+            loadingIndicator.style.display = 'block'; // Show loading indicator
+
+            fetch(url, {
+                method: 'GET',
+                headers: {
+                    'Origin': extractOrigin(url)
+                }
+            })
+            .then(response => response.text())
+            .then(data => {
+                windowElement.innerHTML = data;
+                loadingIndicator.style.display = 'none'; // Hide loading indicator
+            })
+            .catch(error => {
+                windowElement.innerHTML = '<p>Error loading content.</p>';
+                loadingIndicator.style.display = 'none'; // Hide loading indicator
+            });
+        }
+
+        // Loop through the URLs and load content for each
+        urls.forEach((url, index) => {
+            loadContent(url, 'window' + (index + 1));
+        });
+    </script>
+</body>
+</html>
